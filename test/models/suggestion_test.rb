@@ -55,14 +55,6 @@ class SuggestionTest < ActiveSupport::TestCase
     assert_equal "open", other.reload.status
   end
 
-  test "the agent prompt carries the audience, the reach and the grounding fact" do
-    prompt = suggestion.agent_prompt
-
-    assert_match "Cold contacts", prompt
-    assert_match "202", prompt
-    assert_match "Should we stop emailing you?", prompt
-    assert_match "gone quiet", prompt
-  end
 
   test "a category outside the known audiences is rejected" do
     bogus = Suggestion.new(category: "made_up", title: "x")

@@ -2,8 +2,8 @@
 #
 # The numbers are measured live from contacts and deliveries; the copy is
 # authored below, one block per angle. This is a rules engine with real facts
-# interpolated, not a model. Suggestion#agent_prompt is where a model call
-# would slot in.
+# interpolated, not a model. Swapping in a model call means replacing the
+# authored angles below with a request built from the same measured facts.
 class SuggestionGenerator
   MIN_REACH = 40 # below this, a campaign is not worth anyone's afternoon
 

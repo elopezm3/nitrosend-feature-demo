@@ -93,8 +93,7 @@ module Api
         proposed_subject: suggestion.proposed_subject,
         proposed_angle: suggestion.proposed_angle,
         estimated_reach: suggestion.estimated_reach,
-        confidence: suggestion.confidence,
-        agent_prompt: suggestion.agent_prompt
+        confidence: suggestion.confidence
       }
     end
   end

@@ -31,6 +31,20 @@ Open <http://localhost:5173>.
 
 Reset the demo data at any time with `bin/rails db:seed`.
 
+## MCP
+
+The same feature is exposed over MCP, so an agent can ask what is worth sending
+without opening the page.
+
+```bash
+claude mcp add --transport http nitrosend-demo https://nitrosend-feature-demo.fly.dev/mcp
+```
+
+Three tools: `nitro_suggest_campaigns` lists today's suggestions, one angle per
+audience with the fact behind it; `nitro_dismiss_suggestion` turns one down and
+promotes the next; `nitro_draft_campaign` accepts one and creates the draft.
+Drafting closes the audience, the same as in the interface.
+
 ## Deploying
 
 Rails serves the built SPA, so it deploys as a single app. The Docker build
@@ -77,7 +91,7 @@ DESIGN.md                             the visual system
 - `Delivery` holds per-recipient opens and clicks. Without it the audiences
   cannot be computed.
 - Suggestion copy is written in `SuggestionGenerator`; the numbers in it are
-  computed from the data. `Suggestion#agent_prompt` is where a model call
-  would go.
+  computed from the data. Swapping in a model call means replacing the authored
+  angles with a request built from the same facts.
 - The campaign screen you land on after drafting is a placeholder. That
   surface already exists in Nitrosend.

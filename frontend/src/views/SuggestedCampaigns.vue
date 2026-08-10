@@ -10,7 +10,6 @@ import StatRow from "@/components/StatRow.vue"
 import AppNav from "@/components/AppNav.vue"
 import DismissedTray from "@/components/DismissedTray.vue"
 import SlideOver from "@/components/SlideOver.vue"
-import PromptBlock from "@/components/PromptBlock.vue"
 
 const store = useSuggestionsStore()
 const router = useRouter()
@@ -137,10 +136,6 @@ async function draft(id) {
             </dd>
           </div>
         </dl>
-
-        <div class="mt-6">
-          <PromptBlock :prompt="selected.agent_prompt" />
-        </div>
       </template>
 
       <template #footer>

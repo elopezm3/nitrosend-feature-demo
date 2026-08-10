@@ -33,15 +33,4 @@ class Suggestion < ApplicationRecord
     end
   end
 
-  def agent_prompt
-    <<~PROMPT.strip
-      Draft a campaign for the "#{segment.label}" audience (#{estimated_reach} contacts).
-
-      Angle: #{proposed_angle}
-      Suggested subject: #{proposed_subject}
-
-      Context: #{headline_fact}
-      Timing: #{why_now}
-    PROMPT
-  end
 end
