@@ -1,0 +1,35 @@
+/* Global rules and base layer. Entry point — imports the token system and
+   every component surface. See DESIGN.md §4. */
+
+@import "./theme.css";
+@import "./buttons.css";
+@import "./cards.css";
+@import "./badges.css";
+@import "./skeletons.css";
+
+@layer base {
+  /* DESIGN.md §3: base size is 15px; all text-* utilities scale from this. */
+  html {
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-page-tint);
+    color: var(--color-default);
+    font-family: var(--font-sans);
+  }
+
+  /* Applied globally so components never sprinkle cursor-pointer. DESIGN.md §8. */
+  button,
+  [role="button"],
+  a[href] {
+    cursor: pointer;
+  }
+
+  [hidden] { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

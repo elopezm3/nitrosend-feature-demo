@@ -1,0 +1,11 @@
+/* DESIGN.md §4 — Skeletons.
+   The primitives carry only pulse and tint. Size, width and radius are
+   composed at the call site, so utilities never fight the chrome. */
+
+.skeleton-line {
+  @apply animate-pulse bg-faint;
+}
+
+.skeleton-block {
+  @apply animate-pulse bg-surface-sunken dark:bg-white/5;
+}

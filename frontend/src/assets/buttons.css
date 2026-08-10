@@ -1,0 +1,49 @@
+/* DESIGN.md §4 — Buttons.
+   Tone x style matrix. Compose as <button class="button secondary sm">.
+   Borders are ring-1 ring-inset, never `border`, so width stays consistent
+   with the focus ring. */
+
+.button {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-2
+         text-sm font-semibold transition-colors
+         focus-visible:outline-2 focus-visible:outline-offset-2
+         focus-visible:outline-brand-600
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* Solid brand. Exactly one of these per surface — it is THE primary action. */
+.button.primary,
+.button.cta {
+  @apply bg-brand-600 text-white hover:bg-brand-700;
+}
+
+/* The default non-primary action. */
+.button.secondary {
+  @apply bg-surface text-default ring-1 ring-inset ring-border
+         hover:bg-surface-hover;
+}
+
+.button.soft {
+  @apply bg-brand-50 text-brand-600 hover:bg-brand-100
+         dark:bg-brand-950 dark:text-brand-400;
+}
+
+.button.ghost {
+  @apply text-muted hover:bg-surface-hover hover:text-default;
+}
+
+.button.danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.button.xs { @apply px-2 py-1 text-xs; }
+.button.sm { @apply px-2.5 py-1.5; }
+.button.lg { @apply px-4; }
+
+/* Bare icon click target. */
+.icon-button {
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-md text-subtle
+         transition-colors hover:bg-surface-hover hover:text-default
+         focus-visible:outline-2 focus-visible:outline-offset-2
+         focus-visible:outline-brand-600;
+}

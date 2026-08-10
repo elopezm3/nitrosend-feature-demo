@@ -1,24 +1,66 @@
-# README
+# Nitrosend feature demo — AI suggested campaigns
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A demo interface for a feature I think Nitrosend should add: a surface that
+proposes campaigns worth sending today, grounded in what the account has
+already sent and how its contacts actually behaved.
 
-Things you may want to cover:
+## The idea
 
-* Ruby version
+Nitrosend's pitch is that email "stops being a tool you operate and becomes
+something you simply prompt." That works, but it moves a burden. A dashboard,
+for all its clutter, tells you what to do — a calendar, a flows list, a nagging
+empty state. A chat prompt gives you a cursor and waits. You have to already
+know what today's job is.
 
-* System dependencies
+This page fills the blank prompt. It does not write the email; it writes the
+prompt and shows it to you first, so the agent still composes and the human
+still decides.
 
-* Configuration
+Three rules keep it from becoming the "AI suggests things" slop the category is
+full of:
 
-* Database creation
+1. **Every suggestion carries a fact you can check.** Not "consider a win-back"
+   but "255 people opened something in the last 180 days and nothing in the
+   last 60." Each category prints its own definition next to its own count.
+2. **"Why now" is mandatory.** If a suggestion would be equally true next
+   Tuesday, it is not a daily brief item.
+3. **It can say send nothing.** Segments under 40 people produce no suggestion,
+   and the empty state is written as a real answer rather than a failure.
 
-* Database initialization
+## Running it
 
-* How to run the test suite
+Two processes. Rails serves JSON; Vite serves the interface and proxies `/api`
+to Rails, so there is no CORS setup.
 
-* Services (job queues, cache servers, search engines, etc.)
+```bash
+bin/rails db:prepare
+bin/rails db:seed        # 1,200 contacts, 14 campaigns, ~13,600 deliveries
+bin/rails server         # :3000 — API only
 
-* Deployment instructions
+cd frontend
+npm install
+npm run dev              # :5173 — open this one
+```
 
-* ...
+Open <http://localhost:5173>.
+
+## Layout
+
+```
+app/models/audience_segment.rb      the five audience definitions, in one place
+app/services/suggestion_generator.rb turns data into grounded suggestions
+app/controllers/api/                 JSON API
+db/seeds.rb                          deterministic demo data
+frontend/src/assets/                 Tailwind 4 tokens + component CSS
+frontend/src/components/             Vue 3 components
+frontend/DESIGN.md                   the visual system this is built to
+```
+
+## Notes on the build
+
+- **Vue 3 + Vite + Tailwind CSS 4**, CSS-first config. No `tailwind.config.js`;
+  tokens live in `frontend/src/assets/theme.css` under `@theme`.
+- **Vite is pinned to 6.x** — Vite 7 requires Node ≥ 20.19.
+- Data is seeded with a fixed RNG, so reseeding reproduces the same store.
+- `Delivery` (per-recipient opens and clicks) is what makes the segments real.
+  Without it, "cold" and "most engaged" are labels rather than measurements.
