@@ -32,5 +32,4 @@ class Suggestion < ApplicationRecord
       campaign
     end
   end
-
 end
