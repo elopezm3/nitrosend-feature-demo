@@ -58,4 +58,4 @@ end
 
 # Rails 7.2 test runner is incompatible with Minitest 6 (line_filtering calls
 # run/3 where Minitest 6 expects run/1..2).
-gem "minitest", "~> 5.25"
+gem "minitest", "~> 6.0"
