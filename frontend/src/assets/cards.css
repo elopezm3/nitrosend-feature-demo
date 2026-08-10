@@ -1,4 +1,4 @@
-/* DESIGN.md §4 — Cards and wells.
+/* DESIGN.md §4, Cards and wells.
    Cards are FLAT. Overlays and modals own elevation; ordinary product cards
    must not rely on drop shadows. Dark mode drops shadow entirely and lets the
    alpha-white border define the surface. */
@@ -23,7 +23,7 @@
   @apply max-w-xl text-sm text-muted;
 }
 
-/* The rounded-2xl inner panel used INSIDE cards and detail views. Chrome only —
+/* The rounded-2xl inner panel used INSIDE cards and detail views. Chrome only
    padding and layout are composed at the call site. */
 .well {
   @apply rounded-2xl border border-border;

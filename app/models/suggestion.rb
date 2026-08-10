@@ -13,8 +13,28 @@ class Suggestion < ApplicationRecord
     AudienceSegment.find(category)
   end
 
+  # Accepting a suggestion creates a real draft campaign and records where it
+  # came from, so the campaign can always be traced back to the reasoning that
+  # produced it.
+  def draft_campaign!
+    transaction do
+      campaign = Campaign.create!(
+        name: title,
+        subject: proposed_subject,
+        preheader: headline_fact.truncate(140),
+        status: "draft",
+        audience_label: "#{segment.label} (#{estimated_reach} contacts)",
+        from_name: "Kestrel Supply Co.",
+        from_email: "hello@kestrelsupply.com",
+        source_suggestion_id: id
+      )
+      update!(status: "drafted")
+      campaign
+    end
+  end
+
   # What gets handed to the agent when someone accepts a suggestion. The page
-  # never writes the email itself — it writes the prompt and shows it first.
+  # never writes the email itself, it writes the prompt and shows it first.
   def agent_prompt
     <<~PROMPT.strip
       Draft a campaign for the "#{segment.label}" audience (#{estimated_reach} contacts).

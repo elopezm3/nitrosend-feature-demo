@@ -2,15 +2,29 @@ import { defineStore } from "pinia"
 import { ref, computed } from "vue"
 import api from "@/services/api"
 
+// A creation that resolves in 20ms and yanks you to another screen reads as a
+// glitch rather than a transition. This holds the "Creating this campaign"
+// state on screen long enough to be legible. It does not fake work, it only
+// stops a real result from flashing past.
+const MIN_VISIBLE_MS = 650
+
+async function atLeast(ms, work) {
+  const [result] = await Promise.all([
+    work,
+    new Promise((resolve) => setTimeout(resolve, ms))
+  ])
+  return result
+}
+
 export const useSuggestionsStore = defineStore("suggestions", () => {
   const account = ref(null)
   const categories = ref([])
+  const dismissed = ref([])
   const loading = ref(false)
   const rebuilding = ref(false)
+  const draftingId = ref(null)
   const error = ref(null)
 
-  // Categories with nothing to suggest are still real audiences — they just
-  // have no advice attached today, so they do not earn space on the page.
   const withSuggestions = computed(() =>
     categories.value.filter((category) => category.suggestions.length > 0)
   )
@@ -19,58 +33,47 @@ export const useSuggestionsStore = defineStore("suggestions", () => {
     () => !loading.value && !error.value && withSuggestions.value.length === 0
   )
 
-  const total = computed(() =>
-    categories.value.reduce((sum, category) => sum + category.suggestions.length, 0)
-  )
-
   function absorb(data) {
     account.value = data.account
     categories.value = data.categories
+    dismissed.value = data.dismissed ?? []
   }
 
-  async function load() {
-    loading.value = true
+  async function run(flag, work, message) {
+    if (flag) flag.value = true
     error.value = null
     try {
-      absorb(await api.suggestions())
+      absorb(await work())
     } catch (e) {
-      error.value = "Could not reach the suggestions service."
+      error.value = message
     } finally {
-      loading.value = false
+      if (flag) flag.value = false
     }
   }
 
-  async function rebuild() {
-    rebuilding.value = true
+  const load = () => run(loading, api.suggestions, "Could not reach the suggestions service.")
+  const rebuild = () => run(rebuilding, api.regenerate, "Could not rebuild suggestions.")
+  const dismiss = (id) => run(null, () => api.dismiss(id), "Could not dismiss that suggestion.")
+  const restore = (id) => run(null, () => api.restore(id), "Could not bring that suggestion back.")
+
+  // Returns the new campaign id so the caller can navigate to it.
+  async function draft(id) {
+    draftingId.value = id
     error.value = null
     try {
-      absorb(await api.regenerate())
+      const { campaign_id } = await atLeast(MIN_VISIBLE_MS, api.draft(id))
+      return campaign_id
     } catch (e) {
-      error.value = "Could not rebuild suggestions."
+      error.value = "Could not create that campaign."
+      return null
     } finally {
-      rebuilding.value = false
-    }
-  }
-
-  async function dismiss(id) {
-    // Remove it locally first so the page responds immediately, then reconcile.
-    const previous = categories.value
-    categories.value = categories.value.map((category) => ({
-      ...category,
-      suggestions: category.suggestions.filter((s) => s.id !== id)
-    }))
-
-    try {
-      await api.dismiss(id)
-    } catch (e) {
-      categories.value = previous
-      error.value = "Could not dismiss that suggestion."
+      draftingId.value = null
     }
   }
 
   return {
-    account, categories, loading, rebuilding, error,
-    withSuggestions, quiet, total,
-    load, rebuild, dismiss
+    account, categories, dismissed, loading, rebuilding, draftingId, error,
+    withSuggestions, quiet,
+    load, rebuild, dismiss, restore, draft
   }
 })

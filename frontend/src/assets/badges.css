@@ -1,7 +1,7 @@
-/* DESIGN.md §4 — Badges, tags and micro labels.
+/* DESIGN.md §4, Badges, tags and micro labels.
 
    Semantic law: a badge means NEEDS ATTENTION. Passive configuration state
-   renders as the quietest step of the text ramp instead — small, text-subtle,
+   renders as the quietest step of the text ramp instead: small, text-subtle,
    normal case, dot separated. Never as a chip. */
 
 .badge {
@@ -30,7 +30,7 @@
          px-1.5 text-xs text-subtle;
 }
 
-/* The quiet ramp referenced by the semantic law above — passive metadata that
+/* The quiet ramp referenced by the semantic law above, passive metadata that
    is emphatically not a badge. */
 .meta-quiet {
   @apply text-[11px] text-subtle;

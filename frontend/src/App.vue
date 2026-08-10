@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import SuggestedCampaigns from "@/views/SuggestedCampaigns.vue"
+import { RouterView, RouterLink } from "vue-router"
 
 // DESIGN.md §9: dark mode is class-based, toggled by .dark on <html>.
 const dark = ref(false)
@@ -17,13 +17,13 @@ onMounted(() => {
 })
 
 // DESIGN.md §2: brand orange marks current app navigation. It is the only
-// place it appears on this screen — a list of five equally-weighted options
+// place it appears on this screen, a list of five equally-weighted options
 // has no single primary action, and inventing one would be the design error.
 const NAV = [
-  { label: "Campaigns", current: false },
-  { label: "Flows", current: false },
-  { label: "Contacts", current: false },
-  { label: "Suggested", current: true }
+  { label: "Campaigns", to: "/", current: false },
+  { label: "Flows", to: "/", current: false },
+  { label: "Contacts", to: "/", current: false },
+  { label: "Suggested", to: "/", current: true }
 ]
 </script>
 
@@ -36,10 +36,10 @@ const NAV = [
         </span>
 
         <nav class="flex items-center gap-1" aria-label="Primary">
-          <a
+          <RouterLink
             v-for="item in NAV"
             :key="item.label"
-            href="#"
+            :to="item.to"
             class="-mb-px border-b-2 px-3 py-3.5 text-sm font-medium transition-colors"
             :class="
               item.current
@@ -49,7 +49,7 @@ const NAV = [
             :aria-current="item.current ? 'page' : undefined"
           >
             {{ item.label }}
-          </a>
+          </RouterLink>
         </nav>
 
         <button
@@ -69,7 +69,7 @@ const NAV = [
     </header>
 
     <main>
-      <SuggestedCampaigns />
+      <RouterView />
     </main>
   </div>
 </template>

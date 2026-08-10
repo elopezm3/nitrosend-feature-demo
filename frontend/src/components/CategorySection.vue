@@ -2,10 +2,11 @@
 import SuggestionCard from "@/components/SuggestionCard.vue"
 
 defineProps({
-  category: { type: Object, required: true }
+  category: { type: Object, required: true },
+  draftingId: { type: Number, default: null }
 })
 
-defineEmits(["dismiss"])
+defineEmits(["dismiss", "draft", "open"])
 
 const format = new Intl.NumberFormat("en-US")
 </script>
@@ -21,7 +22,12 @@ const format = new Intl.NumberFormat("en-US")
       </div>
       <!-- The rule sits next to the number on purpose. A suggestion is only
            worth trusting if you can see what it counted. -->
-      <p class="mt-1 text-xs text-subtle">{{ category.definition }}</p>
+      <p class="mt-1 text-xs text-subtle">
+        {{ category.definition }}
+        <span v-if="category.remaining">
+          &nbsp;·&nbsp;{{ category.remaining }} other angle{{ category.remaining === 1 ? "" : "s" }} ready
+        </span>
+      </p>
     </header>
 
     <div class="flex flex-col gap-3">
@@ -29,7 +35,10 @@ const format = new Intl.NumberFormat("en-US")
         v-for="suggestion in category.suggestions"
         :key="suggestion.id"
         :suggestion="suggestion"
+        :drafting="draftingId === suggestion.id"
         @dismiss="$emit('dismiss', $event)"
+        @draft="$emit('draft', $event)"
+        @open="$emit('open', $event)"
       />
     </div>
   </section>

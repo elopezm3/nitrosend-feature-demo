@@ -1,4 +1,4 @@
-/* DESIGN.md §4 — Buttons.
+/* DESIGN.md §4, Buttons.
    Tone x style matrix. Compose as <button class="button secondary sm">.
    Borders are ring-1 ring-inset, never `border`, so width stays consistent
    with the focus ring. */
@@ -11,7 +11,7 @@
          disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
-/* Solid brand. Exactly one of these per surface — it is THE primary action. */
+/* Solid brand. Exactly one of these per surface, it is THE primary action. */
 .button.primary,
 .button.cta {
   @apply bg-brand-600 text-white hover:bg-brand-700;

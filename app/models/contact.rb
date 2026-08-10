@@ -22,7 +22,7 @@ class Contact < ApplicationRecord
   scope :never_opened, -> { where.not(id: Delivery.opened.select(:contact_id)) }
 
   # Only judge someone as cold or disengaged once they have actually had a
-  # fair chance to engage — otherwise last week's signups look like dead weight.
+  # fair chance to engage, otherwise last week's signups look like dead weight.
   scope :received_at_least, ->(n) {
     where(id: Delivery.delivered.group(:contact_id).having("COUNT(*) >= ?", n).select(:contact_id))
   }

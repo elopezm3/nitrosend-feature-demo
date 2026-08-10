@@ -1,4 +1,4 @@
-# Nitrosend feature demo — AI suggested campaigns
+# Nitrosend feature demo, AI suggested campaigns
 
 A demo interface for a feature I think Nitrosend should add: a surface that
 proposes campaigns worth sending today, grounded in what the account has
@@ -8,7 +8,7 @@ already sent and how its contacts actually behaved.
 
 Nitrosend's pitch is that email "stops being a tool you operate and becomes
 something you simply prompt." That works, but it moves a burden. A dashboard,
-for all its clutter, tells you what to do — a calendar, a flows list, a nagging
+for all its clutter, tells you what to do, a calendar, a flows list, a nagging
 empty state. A chat prompt gives you a cursor and waits. You have to already
 know what today's job is.
 
@@ -27,6 +27,17 @@ full of:
 3. **It can say send nothing.** Segments under 40 people produce no suggestion,
    and the empty state is written as a real answer rather than a failure.
 
+Each audience carries three genuinely different angles rather than one idea
+dressed three ways. Turning one down promotes the next, so a category only
+falls silent once its alternatives are actually exhausted. Dismissals persist
+until you undo them, with no hidden expiry, and the page always shows what it
+is holding back.
+
+Accepting a suggestion creates a real draft campaign, records which suggestion
+produced it, and opens it. The campaign screen itself is a deliberate
+placeholder: that surface already exists in Nitrosend, and rebuilding it would
+say nothing about the feature being proposed.
+
 ## Running it
 
 Two processes. Rails serves JSON; Vite serves the interface and proxies `/api`
@@ -35,11 +46,11 @@ to Rails, so there is no CORS setup.
 ```bash
 bin/rails db:prepare
 bin/rails db:seed        # 1,200 contacts, 14 campaigns, ~13,600 deliveries
-bin/rails server         # :3000 — API only
+bin/rails server         # :3000, API only
 
 cd frontend
 npm install
-npm run dev              # :5173 — open this one
+npm run dev              # :5173, open this one
 ```
 
 Open <http://localhost:5173>.
@@ -60,7 +71,7 @@ frontend/DESIGN.md                   the visual system this is built to
 
 - **Vue 3 + Vite + Tailwind CSS 4**, CSS-first config. No `tailwind.config.js`;
   tokens live in `frontend/src/assets/theme.css` under `@theme`.
-- **Vite is pinned to 6.x** — Vite 7 requires Node ≥ 20.19.
+- **Vite is pinned to 6.x**, Vite 7 requires Node ≥ 20.19.
 - Data is seeded with a fixed RNG, so reseeding reproduces the same store.
 - `Delivery` (per-recipient opens and clicks) is what makes the segments real.
   Without it, "cold" and "most engaged" are labels rather than measurements.

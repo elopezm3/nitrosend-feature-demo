@@ -1,5 +1,5 @@
 /* Authoritative token definitions. See DESIGN.md §2 (colour) and §3 (type).
-   Tailwind CSS 4, CSS-first config — there is no tailwind.config.js. */
+   Tailwind CSS 4, CSS-first config. There is no tailwind.config.js. */
 
 @import "tailwindcss";
 
@@ -8,8 +8,8 @@
 
 @theme {
   /* ---------------------------------------------------------- brand ------
-     Warm orange. Reserved for positive primary actions and brand identity —
-     never warnings, errors, or destructive flows. */
+     Warm orange. Reserved for positive primary actions and brand identity.
+     Never warnings, errors, or destructive flows. */
   --color-brand-50:  #fff5f0;
   --color-brand-100: #ffe6d9;
   --color-brand-200: #ffc9ad;

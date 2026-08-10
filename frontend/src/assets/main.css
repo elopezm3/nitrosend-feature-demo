@@ -1,4 +1,4 @@
-/* Global rules and base layer. Entry point — imports the token system and
+/* Global rules and base layer. Entry point, imports the token system and
    every component surface. See DESIGN.md §4. */
 
 @import "./theme.css";

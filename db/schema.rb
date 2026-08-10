@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_10_005901) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_10_015315) do
   create_table "campaigns", force: :cascade do |t|
     t.string "name"
     t.string "subject"
@@ -22,6 +22,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_10_005901) do
     t.datetime "sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "source_suggestion_id"
     t.index ["sent_at"], name: "index_campaigns_on_sent_at"
     t.index ["status"], name: "index_campaigns_on_status"
   end
@@ -70,7 +71,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_10_005901) do
     t.datetime "generated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "variant", default: 0, null: false
     t.index ["category", "status"], name: "index_suggestions_on_category_and_status"
+    t.index ["category", "variant"], name: "index_suggestions_on_category_and_variant", unique: true
   end
 
   add_foreign_key "deliveries", "campaigns"

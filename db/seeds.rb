@@ -5,7 +5,7 @@
 # AudienceSegment lands with a real, non-trivial population. A suggestions page
 # is worthless against data where nobody is cold and nobody is loyal.
 
-RNG = Random.new(42) # deterministic — reseeding gives the same store every time
+RNG = Random.new(42) # deterministic: reseeding gives the same store every time
 
 def rand_in(range)
   RNG.rand(range)
@@ -22,19 +22,19 @@ Contact.delete_all
 # which is what lets a loyal contact accumulate 3+ recent opens.
 CAMPAIGNS = [
   [ 300, "Spring restock",              "The full spring range is back in stock", "promo" ],
-  [ 275, "Field notes — March",         "Three things we learned resoling boots", "newsletter" ],
+  [ 275, "Field notes: March",         "Three things we learned resoling boots", "newsletter" ],
   [ 250, "The boot guide",              "Which Kestrel boot is actually for you", "editorial" ],
-  [ 225, "Easter weekend — 20% off",    "Four days only, sitewide", "promo" ],
-  [ 200, "Field notes — April",         "On waxed canvas, and why we gave up on nylon", "newsletter" ],
+  [ 225, "Easter weekend: 20% off",    "Four days only, sitewide", "promo" ],
+  [ 200, "Field notes: April",         "On waxed canvas, and why we gave up on nylon", "newsletter" ],
   [ 175, "New: the waxed canvas range", "Six new pieces, made in Adelaide", "product" ],
   [ 150, "Midyear clearance",           "Last sizes, last chance", "promo" ],
-  [ 125, "Field notes — June",          "A short history of the work jacket", "newsletter" ],
+  [ 125, "Field notes: June",          "A short history of the work jacket", "newsletter" ],
   [ 100, "How we make our wool",        "From the Barossa, in eleven steps", "editorial" ],
   [  82, "Winter preview",              "First look at the cold weather range", "product" ],
-  [  64, "Field notes — August",        "What we're reading this month", "newsletter" ],
+  [  64, "Field notes: August",        "What we're reading this month", "newsletter" ],
   [  45, "Back in stock: the Ridgeline", "The one you kept asking about", "product" ],
-  [  27, "Field notes — September",     "Repair, don't replace", "newsletter" ],
-  [  12, "Autumn restock — early access", "Boots, canvas and wool, back in every size", "promo" ]
+  [  27, "Field notes: September",     "Repair, don't replace", "newsletter" ],
+  [  12, "Autumn restock: early access", "Boots, canvas and wool, back in every size", "promo" ]
 ].freeze
 
 puts "Creating #{CAMPAIGNS.size} sent campaigns…"
@@ -93,7 +93,7 @@ ARCHETYPES.each do |kind, spec|
     last  = LAST.sample(random: RNG)
     joined = rand_in(spec[:joined]).days.ago
 
-    # Not everyone has a first name — Instagram signups usually don't. This is
+    # Not everyone has a first name, Instagram signups usually don't. This is
     # what makes the personalisation gaps in the data real rather than tidy.
     source = Contact::SOURCES.sample(random: RNG)
     has_name = !(source == "instagram" && RNG.rand < 0.7)
