@@ -5,6 +5,9 @@ import { fileURLToPath, URL } from "node:url"
 
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
+  // Vite's output goes to public/spa so it cannot collide with anything Rails
+  // precompiles into public/assets.
+  build: { assetsDir: "spa" },
   resolve: {
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) }
   },

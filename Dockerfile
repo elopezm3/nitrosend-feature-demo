@@ -22,6 +22,17 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
+# Build the Vue SPA. Its output is copied into public/ so Rails and the
+# interface ship as one deployable.
+FROM node:20-slim AS spa
+
+WORKDIR /spa
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
@@ -42,8 +53,16 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
+# The built interface lives in public/, served directly by Rails.
+COPY --from=spa /spa/dist/ ./public/
+
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+
+# Bake the demo data into the image so the app boots instantly with a populated
+# store, and resets to a known state on every restart. The seeded dates are
+# relative to build time, so redeploy to refresh them.
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails db:prepare db:seed
 
 
 

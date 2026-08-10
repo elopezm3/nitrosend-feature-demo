@@ -38,3 +38,8 @@
 /frontend/node_modules
 /frontend/dist
 /frontend/.vite
+
+# SPA build output, produced by the Docker build
+/public/index.html
+/public/spa
+/public/nitrosend-logo*.png

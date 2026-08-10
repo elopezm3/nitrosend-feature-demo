@@ -14,6 +14,11 @@ Rails.application.routes.draw do
     resources :campaigns, only: [ :show ]
   end
 
-  # The interface is the Vue SPA in frontend/. Rails serves JSON only.
-  root to: proc { [ 200, { "Content-Type" => "application/json" }, [ { api: "/api/suggestions", spa: "http://localhost:5173" }.to_json ] ] }
+  root "spa#index"
+
+  # Vue Router owns every other path, so deep links land on the SPA rather
+  # than a Rails 404.
+  get "*path", to: "spa#index", constraints: ->(req) {
+    req.format.html? && !req.path.start_with?("/api", "/rails", "/spa/")
+  }
 end
