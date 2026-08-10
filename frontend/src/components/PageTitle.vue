@@ -7,9 +7,6 @@ defineProps({
 </script>
 
 <template>
-  <!-- The product's page header: large bold title, subtitle beneath, and the
-       page action sitting BELOW the title and left aligned rather than in a
-       right-hand actions slot. -->
   <header class="mb-8">
     <div class="flex items-start gap-3">
       <div v-if="$slots.lead" class="pt-1.5">

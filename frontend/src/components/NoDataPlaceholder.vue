@@ -6,8 +6,6 @@ defineProps({
 </script>
 
 <template>
-  <!-- The product's empty state: a rounded square sunken icon tile, a semibold
-       title, muted centred body, then any actions. -->
   <div class="card flex flex-col items-center px-8 py-16 text-center">
     <div class="well well--sunken flex h-14 w-14 items-center justify-center">
       <svg

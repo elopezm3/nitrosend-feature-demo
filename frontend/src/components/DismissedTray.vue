@@ -8,9 +8,6 @@ const expanded = ref(false)
 </script>
 
 <template>
-  <!-- Dismissal persists until it is undone, with no hidden expiry. That only
-       works if the page is honest about what it is holding back, so the count
-       is always visible and every item can be brought straight back. -->
   <section v-if="dismissed.length" class="border-t border-border pt-5">
     <button
       type="button"

@@ -1,10 +1,5 @@
-# The audience definitions behind every suggestion on the AI suggested
-# campaigns page.
-#
-# These live in one place on purpose. A suggestion is only trustworthy if the
-# reader can check the claim underneath it, so each segment carries the plain
-# English rule it applies and the page prints that rule next to the number.
-# If a definition changes, it changes here and everywhere at once.
+# The audience definitions behind every suggestion. Each carries the plain
+# English rule it applies, which the page prints beside the number it produced.
 class AudienceSegment
   ENGAGED_WINDOW  = 90.days   # "recently active"
   SLIPPING_AFTER  = 60.days   # quiet long enough to notice
@@ -77,8 +72,7 @@ class AudienceSegment
     all.find { |segment| segment.key == key.to_s }
   end
 
-  # Contacts with 3+ opens inside the engagement window. Extracted because the
-  # HAVING clause does not compose with the other scopes cleanly.
+  # Extracted because the HAVING clause does not compose with the other scopes.
   def self.engaged_contact_ids
     Delivery.opened
             .where(opened_at: ENGAGED_WINDOW.ago..)

@@ -8,9 +8,8 @@ const emit = defineEmits(["dismiss", "draft", "open"])
 
 const format = new Intl.NumberFormat("en-US")
 
-// DESIGN.md §4 semantic law: a badge means "needs attention". Confidence is
-// passive metadata, so it renders on the quiet text ramp instead of as a
-// coloured chip.
+// DESIGN.md §4: badges mean "needs attention", so passive metadata like
+// confidence uses the quiet text ramp instead.
 const CONFIDENCE_COPY = {
   high: "Strong signal",
   medium: "Worth a look",

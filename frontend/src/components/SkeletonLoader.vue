@@ -1,6 +1,5 @@
 <script setup>
-// Composite skeletons pulse each bar, never the wrapper, so the card chrome
-// stays still while its contents load. DESIGN.md §4.
+// Pulse each bar, never the wrapper. DESIGN.md §4.
 defineProps({ count: { type: Number, default: 3 } })
 </script>
 

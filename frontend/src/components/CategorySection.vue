@@ -15,9 +15,6 @@ const format = new Intl.NumberFormat("en-US")
 const closed = computed(() => props.category.state !== "active")
 const drafted = computed(() => props.category.state === "drafted")
 
-// The three states are mutually exclusive by construction, so the copy never
-// has to report two outcomes at once. Drafting is a decision reached, not a
-// shortage of ideas, and it reads differently from turning everything down.
 const verdict = computed(() =>
   drafted.value
     ? "You have a campaign in progress for this audience."
@@ -39,13 +36,8 @@ const note = computed(() =>
           {{ category.label }}
         </h2>
         <span class="text-sm text-muted">{{ format.format(category.size) }} members</span>
-        <!-- The product already ships system segments (Bounced, Suppressed,
-             Recently unsubscribed) tagged exactly like this. These audiences
-             are the same kind of object, so they carry the same mark. -->
         <span class="tag">System segment</span>
       </div>
-      <!-- The rule sits next to the number on purpose. A suggestion is only
-           worth trusting if you can see what it counted. -->
       <p class="mt-1 text-xs text-subtle">
         {{ category.definition }}
         <span v-if="category.remaining">
@@ -54,9 +46,6 @@ const note = computed(() =>
       </p>
     </header>
 
-    <!-- The audience keeps its heading, its count and its rule even with
-         nothing left to suggest. Losing the advice is not the same as losing
-         the people, and a section that disappears says the wrong one. -->
     <div v-if="closed" class="well well--sunken flex flex-wrap items-center justify-between gap-4 px-5 py-6">
       <div>
         <p class="text-sm text-muted">{{ verdict }}</p>

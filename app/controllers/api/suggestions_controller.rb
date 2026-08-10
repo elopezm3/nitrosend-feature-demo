@@ -44,13 +44,7 @@ module Api
       }
     end
 
-    # One angle is shown per audience at a time. Turning it down promotes the
-    # next one, so a category only falls silent once its alternatives are
-    # genuinely exhausted rather than the moment you reject an idea.
-    #
-    # An exhausted audience keeps its heading, its count and its rule. Running
-    # out of advice for 202 people is not the same as those 202 people ceasing
-    # to exist, and a section that vanishes says the wrong one.
+    # One angle per audience at a time; turning it down promotes the next.
     def category_payloads
       all = Suggestion.order(:variant).group_by(&:category)
 
@@ -64,8 +58,6 @@ module Api
 
         drafted = produced.find { |s| s.status == "drafted" }
 
-        # Three mutually exclusive outcomes, so the copy can never have to
-        # report two things at once.
         state = if drafted then "drafted"
         elsif current    then "active"
         else                  "exhausted"
@@ -85,8 +77,7 @@ module Api
       end
     end
 
-    # Dismissed suggestions are returned so the page can show what it is
-    # holding back. Suppression the reader cannot see is just a bug.
+    # Returned so the page can show what it is holding back.
     def dismissed_payload
       Suggestion.dismissed.map do |suggestion|
         { id: suggestion.id, title: suggestion.title, label: suggestion.segment.label }

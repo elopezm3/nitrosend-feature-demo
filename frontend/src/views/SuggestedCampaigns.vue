@@ -20,7 +20,6 @@ const selected = ref(null)
 
 onMounted(() => store.load())
 
-// The product opens every list surface with a row of stat tiles.
 const stats = computed(() => {
   const a = store.account
   if (!a) return []
@@ -63,9 +62,6 @@ async function draft(id) {
       <template #lead><AppNav /></template>
       <template #subtitle>{{ subtitle }}</template>
       <template #actions>
-        <!-- Every list surface in the product leads with a solid brand CTA
-             below the title. This is the only page level action here, so it
-             takes that slot. -->
         <button
           type="button"
           class="button cta lg"
@@ -88,7 +84,6 @@ async function draft(id) {
 
     <SkeletonLoader v-if="store.loading" :count="3" />
 
-    <!-- An empty page is a real answer here, not a failure state. -->
     <NoDataPlaceholder
       v-else-if="store.quiet"
       title="Nothing worth sending today"
@@ -149,8 +144,6 @@ async function draft(id) {
       </template>
 
       <template #footer>
-        <!-- The one surface where a single primary action genuinely exists,
-             so this is where brand orange belongs. -->
         <div class="flex items-center justify-between gap-3">
           <button
             type="button"

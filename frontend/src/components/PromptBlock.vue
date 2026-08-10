@@ -10,8 +10,7 @@ async function copy(text) {
   try {
     await navigator.clipboard.writeText(text)
   } catch (e) {
-    // Clipboard access can be refused. Fall back to selecting the text so the
-    // reader can still copy it by hand rather than hitting a dead control.
+    // Clipboard access can be refused; fall back to selecting the text.
     const range = document.createRange()
     range.selectNodeContents(document.getElementById("agent-prompt"))
     const selection = window.getSelection()

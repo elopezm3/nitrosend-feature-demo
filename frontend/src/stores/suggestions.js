@@ -2,10 +2,8 @@ import { defineStore } from "pinia"
 import { ref, computed } from "vue"
 import api from "@/services/api"
 
-// A creation that resolves in 20ms and yanks you to another screen reads as a
-// glitch rather than a transition. This holds the "Creating this campaign"
-// state on screen long enough to be legible. It does not fake work, it only
-// stops a real result from flashing past.
+// Holds the creating state on screen long enough to read. It does not fake
+// work, it stops a real result from flashing past.
 const MIN_VISIBLE_MS = 650
 
 async function atLeast(ms, work) {
@@ -25,8 +23,6 @@ export const useSuggestionsStore = defineStore("suggestions", () => {
   const draftingId = ref(null)
   const error = ref(null)
 
-  // Exhausted audiences stay on the page, so the only genuinely empty case is
-  // having no audience worth showing at all.
   const quiet = computed(
     () => !loading.value && !error.value && categories.value.length === 0
   )
@@ -54,7 +50,6 @@ export const useSuggestionsStore = defineStore("suggestions", () => {
   const dismiss = (id) => run(null, () => api.dismiss(id), "Could not dismiss that suggestion.")
   const restore = (id) => run(null, () => api.restore(id), "Could not bring that suggestion back.")
 
-  // Returns the new campaign id so the caller can navigate to it.
   async function draft(id) {
     draftingId.value = id
     error.value = null

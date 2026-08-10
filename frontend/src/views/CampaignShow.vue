@@ -87,9 +87,6 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- Deliberately a placeholder. Everything past this point is Nitrosend's
-           existing campaign surface, and reimplementing it would say nothing
-           about the feature being proposed. -->
       <div
         class="flex min-h-[280px] items-center justify-center rounded-xl border border-dashed border-border-strong px-6 py-12 text-center"
       >

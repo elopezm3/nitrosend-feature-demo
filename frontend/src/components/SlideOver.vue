@@ -1,9 +1,8 @@
 <script setup>
 import { onMounted, onBeforeUnmount, watch, nextTick, ref } from "vue"
 
-// DESIGN.md §5: a record detail drawer. Overlays from the true window right,
-// backdrop off by default, border-l edge, and it never compresses the page
-// content behind it.
+// DESIGN.md §5: record detail drawer. Backdrop off by default, border-l edge,
+// never compresses the page behind it.
 const props = defineProps({
   show: { type: Boolean, default: false },
   title: { type: String, default: "" }

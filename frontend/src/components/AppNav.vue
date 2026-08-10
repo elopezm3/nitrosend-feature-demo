@@ -2,15 +2,8 @@
 import { ref, onMounted, onBeforeUnmount } from "vue"
 import { RouterLink } from "vue-router"
 
-// The product's primary navigation is a slide-out drawer behind a hamburger,
-// with a dimmed backdrop. The current item is a soft brand-tinted pill, brand
-// text and brand icon together, which is the treatment DESIGN.md §2 sanctions
-// for current app navigation.
-//
-// Everything except "Suggested" belongs to the existing product. It is
-// reproduced here so the new work can be judged in its real surroundings, and
-// it is labelled and rendered as plain text rather than links, so nothing
-// offers an affordance it cannot honour.
+// Everything except "Suggested" belongs to the existing product. It renders as
+// plain text rather than links so nothing offers an affordance it cannot honour.
 
 const open = ref(false)
 const dark = ref(false)
@@ -98,10 +91,7 @@ const EXISTING = [
       aria-label="Primary"
     >
       <div class="mb-7 flex items-center justify-between">
-        <!-- The product ships a light and a dark wordmark. The black on
-             transparent one would vanish on the dark ground, so each theme
-             gets its own file rather than a filter that would wreck the
-             gradient mark. -->
+        <!-- Two files rather than a filter: inverting would wreck the mark. -->
         <img src="/nitrosend-logo.png" alt="Nitrosend" class="h-6 w-auto dark:hidden" />
         <img src="/nitrosend-logo-dark.png" alt="Nitrosend" class="hidden h-6 w-auto dark:block" />
 
@@ -149,9 +139,6 @@ const EXISTING = [
         <span class="meta-quiet">not wired up</span>
       </div>
 
-      <!-- Rendered as text, not links. These are the real product's surfaces,
-           reproduced so the new page can be judged in context. Making them
-           look clickable would be a promise this prototype cannot keep. -->
       <ul class="flex flex-col gap-0.5">
         <li
           v-for="item in EXISTING"

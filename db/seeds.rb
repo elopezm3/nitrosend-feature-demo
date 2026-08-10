@@ -1,9 +1,6 @@
-# Seed data for Kestrel Supply Co., a fictional workwear and outdoor goods
-# brand used to demo the AI suggested campaigns page.
+# Seed data for Kestrel Supply Co., a fictional workwear brand.
 #
-# The engagement archetypes below are deliberately shaped so that every
-# AudienceSegment lands with a real, non-trivial population. A suggestions page
-# is worthless against data where nobody is cold and nobody is loyal.
+# The engagement archetypes are shaped so every AudienceSegment lands populated.
 
 RNG = Random.new(42) # deterministic: reseeding gives the same store every time
 
@@ -58,9 +55,7 @@ Campaign.create!(
   from_email: "hello@kestrelsupply.com"
 )
 
-# ----------------------------------------------------------------- contacts --
-# Each archetype is a rule about *when* someone opens, which is what puts them
-# in one segment and not another.
+# Each archetype is a rule about *when* someone opens.
 ARCHETYPES = {
   loyal:    { share: 0.12, joined: 180..540, opens: ->(age) { 0.85 } },
   casual:   { share: 0.30, joined:  90..540, opens: ->(age) { 0.30 } },
@@ -93,8 +88,7 @@ ARCHETYPES.each do |kind, spec|
     last  = LAST.sample(random: RNG)
     joined = rand_in(spec[:joined]).days.ago
 
-    # Not everyone has a first name, Instagram signups usually don't. This is
-    # what makes the personalisation gaps in the data real rather than tidy.
+    # Instagram signups usually have no first name.
     source = Contact::SOURCES.sample(random: RNG)
     has_name = !(source == "instagram" && RNG.rand < 0.7)
 
@@ -130,8 +124,7 @@ contacts.each_with_index do |(contact_id, subscribed_at, status), i|
     age_in_days = ((Time.current - campaign.sent_at) / 1.day).round
     sent_at = campaign.sent_at + rand_in(0..90).minutes
 
-    # insert_all! requires every row to carry the same keys, so all five
-    # timestamps are always present and nil by default.
+    # insert_all! requires identical keys on every row.
     row = {
       campaign_id: campaign.id, contact_id: contact_id,
       delivered_at: sent_at, opened_at: nil, clicked_at: nil,

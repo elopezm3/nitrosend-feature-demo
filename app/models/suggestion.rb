@@ -13,14 +13,8 @@ class Suggestion < ApplicationRecord
     AudienceSegment.find(category)
   end
 
-  # Accepting a suggestion creates a real draft campaign and records where it
-  # came from, so the campaign can always be traced back to the reasoning that
-  # produced it.
-  #
-  # Drafting also closes the audience. Once you have decided what to send these
-  # people, offering two more ideas for the same people is the feature arguing
-  # with itself: the whole point is not over-suggesting, and a second campaign
-  # to the same segment this week is exactly the fatigue it warns about.
+  # Drafting also supersedes the audience's other angles: once you have decided
+  # what to send these people, more ideas for the same people are noise.
   def draft_campaign!
     transaction do
       campaign = Campaign.create!(
@@ -39,8 +33,6 @@ class Suggestion < ApplicationRecord
     end
   end
 
-  # What gets handed to the agent when someone accepts a suggestion. The page
-  # never writes the email itself, it writes the prompt and shows it first.
   def agent_prompt
     <<~PROMPT.strip
       Draft a campaign for the "#{segment.label}" audience (#{estimated_reach} contacts).

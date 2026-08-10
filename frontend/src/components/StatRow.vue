@@ -3,8 +3,6 @@ defineProps({ stats: { type: Array, required: true } })
 </script>
 
 <template>
-  <!-- List surfaces in the product open with a row of stat tiles before the
-       list itself. Each carries a label, one number, and a quiet sub-line. -->
   <div class="mb-9 grid grid-cols-2 gap-3 sm:grid-cols-4">
     <div v-for="stat in stats" :key="stat.label" class="card px-4 py-3">
       <p class="eyebrow">{{ stat.label }}</p>

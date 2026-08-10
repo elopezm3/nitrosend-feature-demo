@@ -1,31 +1,14 @@
-# Builds the campaign suggestions shown on the AI suggested campaigns page.
+# Builds the campaign suggestions for the AI suggested campaigns page.
 #
-# Three rules shape everything here:
-#
-#   1. Every suggestion carries a fact the reader can go and check. Not
-#      "consider a win-back" but "412 people have not opened anything since
-#      March". A suggestion without a number is an opinion.
-#
-#   2. A thin segment produces no suggestion at all. A page that always has
-#      something to say is a slot machine, and the empty state is a real
-#      answer. Sometimes the right move is to send nothing.
-#
-#   3. Every audience gets several genuinely different angles, not one idea
-#      dressed three ways. Turning one down should offer a real alternative,
-#      which is only true if the alternatives were actually different
-#      campaigns to begin with.
-#
-# What is computed and what is written: the numbers are measured live from
-# contacts and deliveries. The copy is authored here, one block per angle.
-# This is a rules engine with real facts interpolated, not a model. The seam
-# where a model would take over is Suggestion#agent_prompt, which already
-# carries everything such a call would need.
+# The numbers are measured live from contacts and deliveries; the copy is
+# authored below, one block per angle. This is a rules engine with real facts
+# interpolated, not a model. Suggestion#agent_prompt is where a model call
+# would slot in.
 class SuggestionGenerator
   MIN_REACH = 40 # below this, a campaign is not worth anyone's afternoon
 
   def call
-    # Rebuilding refreshes the numbers on live suggestions but must not undo a
-    # decision. Anything already dismissed or drafted stays that way.
+    # A rebuild refreshes open suggestions but must not undo a decision.
     settled = Suggestion.where.not(status: "open").pluck(:category, :variant).to_set
     Suggestion.where(status: "open").delete_all
 
@@ -53,8 +36,7 @@ class SuggestionGenerator
     end
   end
 
-  # ------------------------------------------------------------- categories --
-  # Each method returns the angles for that audience, strongest first.
+  # Each method returns that audience's angles, strongest first.
 
   def most_engaged(segment)
     best = best_recent_campaign
