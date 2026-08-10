@@ -31,6 +31,21 @@ Open <http://localhost:5173>.
 
 Reset the demo data at any time with `bin/rails db:seed`.
 
+## Deploying
+
+Rails serves the built SPA, so it deploys as a single app. The Docker build
+compiles the frontend and bakes the seeded database into the image.
+
+```bash
+brew install flyctl
+fly auth login
+fly apps create nitrosend-feature-demo
+fly secrets set SECRET_KEY_BASE=$(bin/rails secret)
+fly deploy
+```
+
+Seeded dates are relative to build time, so redeploy to refresh them.
+
 ## Tests
 
 ```bash
