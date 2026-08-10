@@ -1,0 +1,91 @@
+<% content_for :title, "AI suggested campaigns" %>
+
+<article class="page">
+  <header class="page-head">
+    <p class="eyebrow">Kestrel Supply Co.</p>
+    <h1>AI suggested campaigns</h1>
+    <p class="lede">
+      Built from <%= number_with_delimiter(@list_size) %> subscribed contacts and
+      <%= pluralize(Campaign.sent.count, "past campaign") %>.
+      <% if @last_send %>
+        Last send was <strong><%= @last_send.name %></strong>,
+        <%= time_ago_in_words(@last_send.sent_at) %> ago.
+      <% end %>
+    </p>
+
+    <div class="page-actions">
+      <%= button_to "Rebuild from current data", regenerate_suggested_campaigns_path,
+            method: :post, class: "button" %>
+      <% if @generated_at %>
+        <span class="meta">Generated <%= time_ago_in_words(@generated_at) %> ago</span>
+      <% end %>
+    </div>
+  </header>
+
+  <% if @suggestions.empty? %>
+    <%# The empty state is a real answer, not a failure. Some days the right
+        move is to send nothing, and the page has to be able to say so. %>
+    <section class="empty">
+      <h2>Nothing worth sending today</h2>
+      <p>
+        No audience is large enough or has moved enough to justify a campaign.
+        Sending anyway costs you attention you will want later.
+      </p>
+    </section>
+  <% else %>
+    <% @segments.each do |segment| %>
+      <% found = @suggestions[segment.key] %>
+      <% next if found.blank? %>
+
+      <section class="category">
+        <header class="category-head">
+          <h2><%= segment.label %></h2>
+          <p class="count"><%= number_with_delimiter(segment.size) %> contacts</p>
+          <%# The rule is printed next to the number on purpose — a suggestion
+              is only checkable if you can see what it counted. %>
+          <p class="definition"><%= segment.definition %></p>
+        </header>
+
+        <% found.each do |suggestion| %>
+          <div class="suggestion">
+            <div class="suggestion-head">
+              <h3><%= suggestion.title %></h3>
+              <span class="confidence confidence--<%= suggestion.confidence %>">
+                <%= suggestion.confidence %> confidence
+              </span>
+            </div>
+
+            <dl class="grounds">
+              <dt>What we found</dt>
+              <dd><%= suggestion.headline_fact %></dd>
+
+              <dt>Why now</dt>
+              <dd><%= suggestion.why_now %></dd>
+
+              <dt>Angle</dt>
+              <dd><%= suggestion.proposed_angle %></dd>
+
+              <dt>Suggested subject</dt>
+              <dd class="subject">“<%= suggestion.proposed_subject %>”</dd>
+            </dl>
+
+            <details class="prompt">
+              <summary>See the prompt this would hand your agent</summary>
+              <%# The page never writes the email. It writes the prompt, and
+                  shows it before anything runs. %>
+              <pre><%= suggestion.agent_prompt %></pre>
+            </details>
+
+            <div class="suggestion-actions">
+              <span class="reach">
+                Reaches <%= number_with_delimiter(suggestion.estimated_reach) %> people
+              </span>
+              <%= button_to "Not this one", dismiss_suggested_campaign_path(suggestion),
+                    method: :patch, class: "button button--quiet" %>
+            </div>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+  <% end %>
+</article>
