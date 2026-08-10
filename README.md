@@ -131,3 +131,9 @@ DESIGN.md                             the visual system
   angles with a request built from the same facts.
 - The campaign screen you land on after drafting is a placeholder. That
   surface already exists in Nitrosend.
+- Regeneration is manual here: the seed builds the suggestions and the Rebuild
+  button recomputes them. In production this would run nightly, early enough
+  that the brief is fresh when the day starts, plus on events that move the
+  audiences: a campaign finishing its send, a contact import completing.
+  Decisions already survive a rebuild, so automating it is safe. Anything
+  dismissed, drafted or superseded is preserved rather than resurrected.
