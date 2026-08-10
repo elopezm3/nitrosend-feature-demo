@@ -16,7 +16,8 @@ export default defineConfig({
     // Proxying to Rails keeps the browser on one origin, so the API needs no
     // CORS gem and cookies behave normally in development.
     proxy: {
-      "/api": { target: "http://localhost:3000", changeOrigin: true }
+      "/api": { target: "http://localhost:3000", changeOrigin: true },
+      "/mcp": { target: "http://localhost:3000", changeOrigin: true }
     }
   }
 })

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue"
+import { ref, computed, onMounted, onBeforeUnmount } from "vue"
 import { RouterLink } from "vue-router"
 
 // Everything except "Suggested" belongs to the existing product. It renders as
@@ -7,6 +7,21 @@ import { RouterLink } from "vue-router"
 
 const open = ref(false)
 const dark = ref(false)
+const copied = ref(false)
+
+const connectCommand = computed(
+  () => `claude mcp add --transport http nitrosend ${window.location.origin}/mcp`
+)
+
+async function copyCommand() {
+  try {
+    await navigator.clipboard.writeText(connectCommand.value)
+    copied.value = true
+    setTimeout(() => (copied.value = false), 2000)
+  } catch (e) {
+    copied.value = false
+  }
+}
 
 function applyTheme(value) {
   dark.value = value
@@ -161,10 +176,33 @@ const EXISTING = [
         </li>
       </ul>
 
+      <p class="mt-5 text-[13px] text-subtle">
+        Only <span class="font-medium text-muted">Suggested</span> is new work. The rest is
+        Nitrosend as it ships today.
+      </p>
+
       <div class="well well--sunken mt-auto p-4">
-        <p class="text-[13px] text-muted">
-          Only <span class="font-semibold text-default">Suggested</span> is new work. The rest is
-          Nitrosend as it ships today, shown here for context.
+        <span class="badge brand mb-2.5">Connect your agent</span>
+
+        <p class="mb-3 text-[13px] text-muted">
+          The same suggestions are available over MCP, so you can ask what to send
+          without opening this page.
+        </p>
+
+        <div class="rounded-lg bg-surface p-3">
+          <div class="mb-1.5 flex items-center justify-between gap-2">
+            <span class="eyebrow">Paste into your terminal</span>
+            <button type="button" class="button ghost xs" @click="copyCommand">
+              {{ copied ? "Copied" : "Copy" }}
+            </button>
+          </div>
+          <code class="block font-mono text-[11px] leading-relaxed break-all text-muted">
+            {{ connectCommand }}
+          </code>
+        </div>
+
+        <p class="mt-2.5 text-[11px] text-subtle">
+          Claude Code, Claude Desktop, or any MCP client.
         </p>
       </div>
     </nav>
