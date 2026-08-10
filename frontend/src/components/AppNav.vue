@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
-import { RouterLink } from "vue-router"
+import { RouterLink, useRoute } from "vue-router"
+
+const route = useRoute()
 
 // Everything except "Suggested" belongs to the existing product. It renders as
 // plain text rather than links so nothing offers an affordance it cannot honour.
@@ -67,7 +69,13 @@ const EXISTING = [
   { label: "Contacts", icon: "contacts" },
   { label: "Brand", icon: "brand" },
   { label: "Integrations", icon: "integrations" },
-  { label: "Learning Center", icon: "learning" }
+]
+
+// Two working destinations now, so the current item is derived from the route
+// rather than hardcoded.
+const MINE = [
+  { label: "Suggested", icon: "spark", to: "/", badge: "New", tone: "green" },
+  { label: "Learning Center", icon: "learning", to: "/learning" }
 ]
 </script>
 
@@ -127,27 +135,36 @@ const EXISTING = [
       </div>
 
       <p class="eyebrow mb-2">This prototype</p>
-      <RouterLink
-        to="/"
-        class="flex items-center gap-3 rounded-lg bg-brand-50 px-3 py-2.5 text-[15px]
-               font-medium text-brand-700 dark:bg-brand-950 dark:text-brand-400"
-        aria-current="page"
-        @click="open = false"
-      >
-        <svg
-          viewBox="0 0 20 20"
-          class="h-5 w-5 shrink-0 text-brand-500"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linejoin="round"
-          stroke-linecap="round"
-        >
-          <path :d="ICONS.spark" />
-        </svg>
-        Suggested
-        <span class="badge green ml-auto">New</span>
-      </RouterLink>
+      <ul class="flex flex-col gap-0.5">
+        <li v-for="item in MINE" :key="item.label">
+          <RouterLink
+            :to="item.to"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium transition-colors"
+            :class="
+              route.path === item.to
+                ? 'bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-400'
+                : 'text-default hover:bg-surface-hover'
+            "
+            :aria-current="route.path === item.to ? 'page' : undefined"
+            @click="open = false"
+          >
+            <svg
+              viewBox="0 0 20 20"
+              class="h-5 w-5 shrink-0"
+              :class="route.path === item.to ? 'text-brand-500' : 'text-muted'"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+            >
+              <path :d="ICONS[item.icon]" />
+            </svg>
+            {{ item.label }}
+            <span v-if="item.badge" class="badge ml-auto" :class="item.tone">{{ item.badge }}</span>
+          </RouterLink>
+        </li>
+      </ul>
 
       <div class="mt-6 mb-2 flex items-baseline justify-between gap-3">
         <p class="eyebrow">Existing Nitrosend</p>
@@ -177,16 +194,15 @@ const EXISTING = [
       </ul>
 
       <p class="mt-5 text-[13px] text-subtle">
-        Only <span class="font-medium text-muted">Suggested</span> is new work. The rest is
-        Nitrosend as it ships today.
+        Only the two above are new work. The rest is Nitrosend as it ships today.
       </p>
 
       <div class="well well--sunken mt-auto p-4">
         <span class="badge brand mb-2.5">Connect your agent</span>
 
         <p class="mb-3 text-[13px] text-muted">
-          The same suggestions are available over MCP, so you can ask what to send
-          without opening this page.
+          The same suggestions are available over MCP. There is a short guide in the
+          <RouterLink to="/learning" class="font-medium text-brand-700 underline decoration-border underline-offset-2 dark:text-brand-400" @click="open = false">Learning Center</RouterLink>.
         </p>
 
         <div class="rounded-lg bg-surface p-3">

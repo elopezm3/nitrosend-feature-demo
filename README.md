@@ -34,7 +34,8 @@ Reset the demo data at any time with `bin/rails db:seed`.
 ## Try it over MCP
 
 The same feature is exposed over MCP, so an agent can ask what is worth sending
-without opening the page.
+without opening the page. This guide is also in the app itself, under
+**Learning Center** in the navigation.
 
 **1. Connect**
 
