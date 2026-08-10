@@ -55,3 +55,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# Rails 7.2 test runner is incompatible with Minitest 6 (line_filtering calls
+# run/3 where Minitest 6 expects run/1..2).
+gem "minitest", "~> 5.25"

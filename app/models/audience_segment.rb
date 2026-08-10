@@ -65,8 +65,12 @@ class AudienceSegment
     @scope = scope
   end
 
+  # Deliberately not memoised at the class level. Caching the instances here
+  # would also cache each one's @size for the life of the process, so a booted
+  # server would keep reporting the segment sizes it computed on the first
+  # request no matter how the audience changed underneath it.
   def self.all
-    @all ||= DEFINITIONS.map { |attrs| new(**attrs) }
+    DEFINITIONS.map { |attrs| new(**attrs) }
   end
 
   def self.find(key)
