@@ -117,6 +117,22 @@ class McpControllerTest < ActionDispatch::IntegrationTest
                  tool_text(call_tool("nitro_suggest_campaigns"))
   end
 
+  test "drafting never claims a send, and points at the approval step" do
+    text = tool_text(call_tool("nitro_draft_campaign", { suggestion_id: open_id }))
+
+    assert_match "Status: draft", text
+    assert_match "Nothing has been sent and nothing is scheduled", text
+    assert_match "approval step", text
+    assert_no_match(/\bsent successfully|has been sent\b(?! and nothing)/, text)
+  end
+
+  test "no tool on this server can send" do
+    names = rpc("tools/list").dig("result", "tools").map { |t| t["name"] }
+
+    assert_empty names.grep(/send|schedule|deliver/),
+      "sending must stay a deliberate human step in Nitrosend"
+  end
+
   test "acting on a suggestion twice is refused rather than duplicated" do
     id = open_id
     call_tool("nitro_draft_campaign", { suggestion_id: id })

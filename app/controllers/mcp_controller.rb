@@ -41,7 +41,12 @@ class McpController < ActionController::API
                    "angle id from nitro_suggest_campaigns, recommended or held back, so " \
                    "there is no need to dismiss your way down to one. This closes the " \
                    "audience: the remaining angles are withdrawn, because one campaign " \
-                   "per audience is the point. Creates a draft only, nothing is sent.",
+                   "per audience is the point.\n\n" \
+                   "This drafts only and there is no tool here that sends. If the " \
+                   "operator asks to send, draft it and tell them plainly that it is " \
+                   "waiting as a draft: sending is a separate approval step in Nitrosend " \
+                   "(nitro_control_delivery), which a person performs after reviewing the " \
+                   "audience and the copy. Never report a campaign as sent or scheduled.",
       inputSchema: {
         type: "object",
         properties: {
@@ -146,7 +151,8 @@ class McpController < ActionController::API
     "#{account}\n#{lines.join("\n")}\n\n" \
     "One angle per audience is recommended on purpose; the alternatives are named " \
     "above so you can weigh them. Drafting any angle closes its audience, because " \
-    "one campaign per audience is the point."
+    "one campaign per audience is the point. This server drafts only: sending stays " \
+    "a deliberate human approval step in Nitrosend."
   end
 
   def dismiss(id)
@@ -172,7 +178,10 @@ class McpController < ActionController::API
     campaign = suggestion.draft_campaign!
 
     "Created draft campaign ##{campaign.id}, \"#{campaign.name}\", subject " \
-    "\"#{campaign.subject}\", audience #{campaign.audience_label}. Nothing has been sent. " \
+    "\"#{campaign.subject}\", audience #{campaign.audience_label}.\n" \
+    "Status: draft. Nothing has been sent and nothing is scheduled. Sending is a " \
+    "separate approval step a person performs in Nitrosend after reviewing the " \
+    "audience and the copy; this server cannot do it.\n" \
     "#{suggestion.segment.label} is now settled and will not offer further angles."
   end
 
