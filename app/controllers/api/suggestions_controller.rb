@@ -62,16 +62,25 @@ module Api
         # Never produced anything and too small to, so it has nothing to say.
         next if produced.empty?
 
+        drafted = produced.find { |s| s.status == "drafted" }
+
+        # Three mutually exclusive outcomes, so the copy can never have to
+        # report two things at once.
+        state = if drafted then "drafted"
+        elsif current    then "active"
+        else                  "exhausted"
+        end
+
         {
           key: segment.key,
           label: segment.label,
           definition: segment.definition,
           size: segment.size,
-          state: current ? "active" : "exhausted",
-          remaining: [ available.size - 1, 0 ].max,
-          considered: produced.size,
-          drafted: produced.count { |s| s.status == "drafted" },
-          suggestions: current ? [ suggestion_payload(current) ] : []
+          state: state,
+          remaining: state == "active" ? [ available.size - 1, 0 ].max : 0,
+          passed: produced.count { |s| s.status == "dismissed" },
+          drafted_campaign_id: drafted && Campaign.find_by(source_suggestion_id: drafted.id)&.id,
+          suggestions: state == "active" ? [ suggestion_payload(current) ] : []
         }
       end
     end

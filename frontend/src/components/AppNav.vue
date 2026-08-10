@@ -1,10 +1,16 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue"
+import { RouterLink } from "vue-router"
 
 // The product's primary navigation is a slide-out drawer behind a hamburger,
 // with a dimmed backdrop. The current item is a soft brand-tinted pill, brand
 // text and brand icon together, which is the treatment DESIGN.md §2 sanctions
 // for current app navigation.
+//
+// Everything except "Suggested" belongs to the existing product. It is
+// reproduced here so the new work can be judged in its real surroundings, and
+// it is labelled and rendered as plain text rather than links, so nothing
+// offers an affordance it cannot honour.
 
 const open = ref(false)
 const dark = ref(false)
@@ -16,17 +22,7 @@ function applyTheme(value) {
 }
 
 function onKeydown(event) {
-  if (event.key === "Escape" && open.value) {
-    open.value = false
-    return
-  }
-  // The drawer's own search shortcut, matching the "/" hint the product shows.
-  if (event.key === "/" && !open.value) {
-    const tag = document.activeElement?.tagName
-    if (tag === "INPUT" || tag === "TEXTAREA") return
-    event.preventDefault()
-    open.value = true
-  }
+  if (event.key === "Escape" && open.value) open.value = false
 }
 
 onMounted(() => {
@@ -52,19 +48,15 @@ const ICONS = {
   learning: "M10 3.5 18 7l-8 3.5L2 7zM5.5 9v4.5c0 1.2 2 2.5 4.5 2.5s4.5-1.3 4.5-2.5V9"
 }
 
-const PRIMARY = [
+const EXISTING = [
   { label: "Home", icon: "home" },
-  { label: "Suggested", icon: "spark", current: true, badge: "New", tone: "green" },
   { label: "Campaigns", icon: "send" },
   { label: "Flows", icon: "flows" },
   { label: "Templates", icon: "templates" },
   { label: "Inbox", icon: "inbox", badge: "Beta", tone: "red" },
   { label: "Outreach", icon: "outreach", badge: "Soon", tone: "gray" },
   { label: "Activity", icon: "activity" },
-  { label: "Contacts", icon: "contacts" }
-]
-
-const SECONDARY = [
+  { label: "Contacts", icon: "contacts" },
   { label: "Brand", icon: "brand" },
   { label: "Integrations", icon: "integrations" },
   { label: "Learning Center", icon: "learning" }
@@ -105,10 +97,14 @@ const SECONDARY = [
              bg-surface px-5 py-5"
       aria-label="Primary"
     >
-      <div class="mb-6 flex items-center justify-between">
-        <span class="text-[19px] font-semibold tracking-[-0.02em] text-default">
-          <span class="text-brand-500">◗</span> nitrosend
-        </span>
+      <div class="mb-7 flex items-center justify-between">
+        <!-- The product ships a light and a dark wordmark. The black on
+             transparent one would vanish on the dark ground, so each theme
+             gets its own file rather than a filter that would wreck the
+             gradient mark. -->
+        <img src="/nitrosend-logo.png" alt="Nitrosend" class="h-6 w-auto dark:hidden" />
+        <img src="/nitrosend-logo-dark.png" alt="Nitrosend" class="hidden h-6 w-auto dark:block" />
+
         <button
           type="button"
           class="icon-button"
@@ -116,10 +112,7 @@ const SECONDARY = [
           @click="applyTheme(!dark)"
         >
           <svg viewBox="0 0 20 20" class="h-4 w-4" fill="currentColor" aria-hidden="true">
-            <path
-              v-if="dark"
-              d="M17.29 12.79A8 8 0 0 1 7.21 2.71a8.001 8.001 0 1 0 10.08 10.08Z"
-            />
+            <path v-if="dark" d="M17.29 12.79A8 8 0 0 1 7.21 2.71a8.001 8.001 0 1 0 10.08 10.08Z" />
             <path
               v-else
               d="M10 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-4a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 14a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1Zm8-6a1 1 0 0 1-1 1h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1ZM4 10a1 1 0 0 1-1 1H2a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1Z"
@@ -128,79 +121,63 @@ const SECONDARY = [
         </button>
       </div>
 
-      <label class="mb-5 flex items-center gap-2 text-sm text-subtle">
-        <span class="sr-only">Search</span>
-        <input
-          type="search"
-          placeholder="Search…"
-          class="w-full bg-transparent text-[15px] text-default placeholder:text-subtle focus:outline-none"
-        />
-        <span class="kbd">/</span>
-      </label>
+      <p class="eyebrow mb-2">This prototype</p>
+      <RouterLink
+        to="/"
+        class="flex items-center gap-3 rounded-lg bg-brand-50 px-3 py-2.5 text-[15px]
+               font-medium text-brand-700 dark:bg-brand-950 dark:text-brand-400"
+        aria-current="page"
+        @click="open = false"
+      >
+        <svg
+          viewBox="0 0 20 20"
+          class="h-5 w-5 shrink-0 text-brand-500"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        >
+          <path :d="ICONS.spark" />
+        </svg>
+        Suggested
+        <span class="badge green ml-auto">New</span>
+      </RouterLink>
 
+      <div class="mt-6 mb-2 flex items-baseline justify-between gap-3">
+        <p class="eyebrow">Existing Nitrosend</p>
+        <span class="meta-quiet">not wired up</span>
+      </div>
+
+      <!-- Rendered as text, not links. These are the real product's surfaces,
+           reproduced so the new page can be judged in context. Making them
+           look clickable would be a promise this prototype cannot keep. -->
       <ul class="flex flex-col gap-0.5">
-        <li v-for="item in PRIMARY" :key="item.label">
-          <a
-            href="#"
-            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium transition-colors"
-            :class="
-              item.current
-                ? 'bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-400'
-                : 'text-default hover:bg-surface-hover'
-            "
-            :aria-current="item.current ? 'page' : undefined"
-            @click.prevent="open = false"
+        <li
+          v-for="item in EXISTING"
+          :key="item.label"
+          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium text-subtle"
+        >
+          <svg
+            viewBox="0 0 20 20"
+            class="h-5 w-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+            stroke-linecap="round"
           >
-            <svg
-              viewBox="0 0 20 20"
-              class="h-5 w-5 shrink-0"
-              :class="item.current ? 'text-brand-500' : 'text-muted'"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linejoin="round"
-              stroke-linecap="round"
-            >
-              <path :d="ICONS[item.icon]" />
-            </svg>
-            {{ item.label }}
-            <span v-if="item.badge" class="badge ml-auto" :class="item.tone">{{ item.badge }}</span>
-          </a>
-        </li>
-      </ul>
-
-      <hr class="my-4 border-0 border-t border-border" />
-
-      <ul class="flex flex-col gap-0.5">
-        <li v-for="item in SECONDARY" :key="item.label">
-          <a
-            href="#"
-            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] font-medium
-                   text-default transition-colors hover:bg-surface-hover"
-            @click.prevent="open = false"
-          >
-            <svg
-              viewBox="0 0 20 20"
-              class="h-5 w-5 shrink-0 text-muted"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linejoin="round"
-              stroke-linecap="round"
-            >
-              <path :d="ICONS[item.icon]" />
-            </svg>
-            {{ item.label }}
-          </a>
+            <path :d="ICONS[item.icon]" />
+          </svg>
+          {{ item.label }}
+          <span v-if="item.badge" class="badge ml-auto" :class="item.tone">{{ item.badge }}</span>
         </li>
       </ul>
 
       <div class="well well--sunken mt-auto p-4">
-        <p class="mb-1 text-sm font-semibold text-brand-700 dark:text-brand-400">
-          Connect your agent
-        </p>
         <p class="text-[13px] text-muted">
-          Connect Nitrosend to your AI agent for the full experience.
+          Only <span class="font-semibold text-default">Suggested</span> is new work. The rest is
+          Nitrosend as it ships today, shown here for context.
         </p>
       </div>
     </nav>

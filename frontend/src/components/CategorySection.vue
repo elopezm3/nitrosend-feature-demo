@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue"
+import { RouterLink } from "vue-router"
 import SuggestionCard from "@/components/SuggestionCard.vue"
 
 const props = defineProps({
@@ -11,18 +12,23 @@ defineEmits(["dismiss", "draft", "open"])
 
 const format = new Intl.NumberFormat("en-US")
 
-const exhausted = computed(() => props.category.state === "exhausted")
+const closed = computed(() => props.category.state !== "active")
+const drafted = computed(() => props.category.state === "drafted")
 
-// Running out of advice for an audience is a conclusion, not an error, so the
-// copy says which conclusion was reached. Drafting a campaign and rejecting
-// every angle both empty the section, but they mean opposite things.
-const verdict = computed(() => {
-  const { drafted, considered } = props.category
-  if (drafted > 0) {
-    return "You drafted a campaign for this audience. Nothing further worth sending this week."
-  }
-  return `You passed on all ${considered} angles. Nothing here is worth a send this week.`
-})
+// The three states are mutually exclusive by construction, so the copy never
+// has to report two outcomes at once. Drafting is a decision reached, not a
+// shortage of ideas, and it reads differently from turning everything down.
+const verdict = computed(() =>
+  drafted.value
+    ? "You have a campaign in progress for this audience."
+    : `You passed on all ${props.category.passed} angles. Nothing here is worth a send this week.`
+)
+
+const note = computed(() =>
+  drafted.value
+    ? "One send per audience is the point. This one is settled until the next cycle."
+    : "New angles appear when the numbers move, not when you ask again."
+)
 </script>
 
 <template>
@@ -51,11 +57,18 @@ const verdict = computed(() => {
     <!-- The audience keeps its heading, its count and its rule even with
          nothing left to suggest. Losing the advice is not the same as losing
          the people, and a section that disappears says the wrong one. -->
-    <div v-if="exhausted" class="well well--sunken px-5 py-6">
-      <p class="text-sm text-muted">{{ verdict }}</p>
-      <p class="mt-1.5 text-xs text-subtle">
-        New angles appear when the numbers move, not when you ask again.
-      </p>
+    <div v-if="closed" class="well well--sunken flex flex-wrap items-center justify-between gap-4 px-5 py-6">
+      <div>
+        <p class="text-sm text-muted">{{ verdict }}</p>
+        <p class="mt-1.5 text-xs text-subtle">{{ note }}</p>
+      </div>
+      <RouterLink
+        v-if="category.drafted_campaign_id"
+        :to="`/campaigns/${category.drafted_campaign_id}`"
+        class="button secondary sm"
+      >
+        Open the draft
+      </RouterLink>
     </div>
 
     <div v-else class="flex flex-col gap-3">

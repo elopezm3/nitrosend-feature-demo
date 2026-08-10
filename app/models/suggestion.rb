@@ -1,5 +1,5 @@
 class Suggestion < ApplicationRecord
-  STATUSES = %w[open dismissed drafted].freeze
+  STATUSES = %w[open dismissed drafted superseded].freeze
 
   validates :category, inclusion: { in: AudienceSegment::KEYS }
   validates :title, presence: true
@@ -16,6 +16,11 @@ class Suggestion < ApplicationRecord
   # Accepting a suggestion creates a real draft campaign and records where it
   # came from, so the campaign can always be traced back to the reasoning that
   # produced it.
+  #
+  # Drafting also closes the audience. Once you have decided what to send these
+  # people, offering two more ideas for the same people is the feature arguing
+  # with itself: the whole point is not over-suggesting, and a second campaign
+  # to the same segment this week is exactly the fatigue it warns about.
   def draft_campaign!
     transaction do
       campaign = Campaign.create!(
@@ -29,6 +34,7 @@ class Suggestion < ApplicationRecord
         source_suggestion_id: id
       )
       update!(status: "drafted")
+      self.class.where(category: category, status: "open").update_all(status: "superseded")
       campaign
     end
   end
