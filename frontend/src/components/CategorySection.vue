@@ -1,7 +1,8 @@
 <script setup>
+import { computed } from "vue"
 import SuggestionCard from "@/components/SuggestionCard.vue"
 
-defineProps({
+const props = defineProps({
   category: { type: Object, required: true },
   draftingId: { type: Number, default: null }
 })
@@ -9,6 +10,19 @@ defineProps({
 defineEmits(["dismiss", "draft", "open"])
 
 const format = new Intl.NumberFormat("en-US")
+
+const exhausted = computed(() => props.category.state === "exhausted")
+
+// Running out of advice for an audience is a conclusion, not an error, so the
+// copy says which conclusion was reached. Drafting a campaign and rejecting
+// every angle both empty the section, but they mean opposite things.
+const verdict = computed(() => {
+  const { drafted, considered } = props.category
+  if (drafted > 0) {
+    return "You drafted a campaign for this audience. Nothing further worth sending this week."
+  }
+  return `You passed on all ${considered} angles. Nothing here is worth a send this week.`
+})
 </script>
 
 <template>
@@ -30,7 +44,17 @@ const format = new Intl.NumberFormat("en-US")
       </p>
     </header>
 
-    <div class="flex flex-col gap-3">
+    <!-- The audience keeps its heading, its count and its rule even with
+         nothing left to suggest. Losing the advice is not the same as losing
+         the people, and a section that disappears says the wrong one. -->
+    <div v-if="exhausted" class="well well--sunken px-5 py-6">
+      <p class="text-sm text-muted">{{ verdict }}</p>
+      <p class="mt-1.5 text-xs text-subtle">
+        New angles appear when the numbers move, not when you ask again.
+      </p>
+    </div>
+
+    <div v-else class="flex flex-col gap-3">
       <SuggestionCard
         v-for="suggestion in category.suggestions"
         :key="suggestion.id"

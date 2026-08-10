@@ -25,12 +25,10 @@ export const useSuggestionsStore = defineStore("suggestions", () => {
   const draftingId = ref(null)
   const error = ref(null)
 
-  const withSuggestions = computed(() =>
-    categories.value.filter((category) => category.suggestions.length > 0)
-  )
-
+  // Exhausted audiences stay on the page, so the only genuinely empty case is
+  // having no audience worth showing at all.
   const quiet = computed(
-    () => !loading.value && !error.value && withSuggestions.value.length === 0
+    () => !loading.value && !error.value && categories.value.length === 0
   )
 
   function absorb(data) {
@@ -73,7 +71,7 @@ export const useSuggestionsStore = defineStore("suggestions", () => {
 
   return {
     account, categories, dismissed, loading, rebuilding, draftingId, error,
-    withSuggestions, quiet,
+    quiet,
     load, rebuild, dismiss, restore, draft
   }
 })

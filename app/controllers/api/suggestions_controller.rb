@@ -44,19 +44,30 @@ module Api
     # One angle is shown per audience at a time. Turning it down promotes the
     # next one, so a category only falls silent once its alternatives are
     # genuinely exhausted rather than the moment you reject an idea.
+    #
+    # An exhausted audience keeps its heading, its count and its rule. Running
+    # out of advice for 202 people is not the same as those 202 people ceasing
+    # to exist, and a section that vanishes says the wrong one.
     def category_payloads
-      queued = Suggestion.open.order(:variant).group_by(&:category)
+      all = Suggestion.order(:variant).group_by(&:category)
 
-      AudienceSegment.all.map do |segment|
-        available = Array(queued[segment.key])
+      AudienceSegment.all.filter_map do |segment|
+        produced = Array(all[segment.key])
+        available = produced.select { |s| s.status == "open" }
         current = available.first
+
+        # Never produced anything and too small to, so it has nothing to say.
+        next if produced.empty?
 
         {
           key: segment.key,
           label: segment.label,
           definition: segment.definition,
           size: segment.size,
+          state: current ? "active" : "exhausted",
           remaining: [ available.size - 1, 0 ].max,
+          considered: produced.size,
+          drafted: produced.count { |s| s.status == "drafted" },
           suggestions: current ? [ suggestion_payload(current) ] : []
         }
       end

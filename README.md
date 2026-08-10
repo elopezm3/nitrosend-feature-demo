@@ -33,6 +33,15 @@ falls silent once its alternatives are actually exhausted. Dismissals persist
 until you undo them, with no hidden expiry, and the page always shows what it
 is holding back.
 
+The angles are deliberately finite. They are ordered strongest first, so
+generating forever would guarantee that anyone who kept clicking ended up
+reading the weakest idea presented with the same confidence as the best one.
+The facts do not change between rejections either, so a fourth angle for the
+same 202 people would be padding. When an audience runs out it keeps its
+heading, its count and its rule, and states which conclusion was reached:
+a campaign was drafted, or every angle was turned down. New angles arrive when
+the numbers move, not when you ask again.
+
 Accepting a suggestion creates a real draft campaign, records which suggestion
 produced it, and opens it. The campaign screen itself is a deliberate
 placeholder: that surface already exists in Nitrosend, and rebuilding it would

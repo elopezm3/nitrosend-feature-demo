@@ -70,12 +70,12 @@ async function draft(id) {
     <NoDataPlaceholder
       v-else-if="store.quiet"
       title="Nothing worth sending today"
-      body="Every audience has either been answered or is too small to justify a campaign. Sending anyway spends attention you will want later."
+      body="No audience is large enough to justify a campaign yet. Import contacts or send something, and suggestions will appear as the numbers build up."
     />
 
     <div v-else class="flex flex-col gap-10">
       <CategorySection
-        v-for="category in store.withSuggestions"
+        v-for="category in store.categories"
         :key="category.key"
         :category="category"
         :drafting-id="store.draftingId"
