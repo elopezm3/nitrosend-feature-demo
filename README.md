@@ -31,19 +31,50 @@ Open <http://localhost:5173>.
 
 Reset the demo data at any time with `bin/rails db:seed`.
 
-## MCP
+## Try it over MCP
 
 The same feature is exposed over MCP, so an agent can ask what is worth sending
 without opening the page.
 
+**1. Connect**
+
 ```bash
-claude mcp add --transport http nitrosend-demo https://nitrosend-feature-demo.fly.dev/mcp
+claude mcp add --transport http nitrosend https://nitrosend-feature-demo.fly.dev/mcp
 ```
 
-Three tools: `nitro_suggest_campaigns` lists today's suggestions, one angle per
-audience with the fact behind it; `nitro_dismiss_suggestion` turns one down and
-promotes the next; `nitro_draft_campaign` accepts one and creates the draft.
-Drafting closes the audience, the same as in the interface.
+Works in Claude Code, Claude Desktop, or any MCP client. No account, no key.
+
+**2. Ask "What can I send today?"**
+
+You get the five audiences. Each one states the rule used to select it, how many
+people it holds, the measured fact behind the recommendation, and the other
+angles held back for that audience.
+
+**3. Try "Draft the one for slipping away"**
+
+Creates a real draft campaign and closes that audience, because one campaign per
+audience is the point. You can draft a held-back angle directly by id; there is
+no need to dismiss your way down to it.
+
+**4. Try "Send it"**
+
+It will not, and it will tell you why. Drafting is where this stops. Sending is a
+separate approval a person performs in Nitrosend after reviewing the audience and
+the copy, so there is deliberately no tool here that can send.
+
+**5. Try "Not that one"**
+
+Dismisses the recommendation and promotes the next angle. Dismissing is
+permanent, so it is for rejecting an idea rather than browsing.
+
+Three tools: `nitro_suggest_campaigns`, `nitro_dismiss_suggestion`,
+`nitro_draft_campaign`.
+
+Reset the demo data at any time:
+
+```bash
+fly ssh console -C "bin/rails db:seed"
+```
 
 ## Deploying
 
