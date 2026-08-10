@@ -59,16 +59,32 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     assert_match "New subscribers (45 members)", text
     assert_match "Rule: Joined in the last 30 days.", text
     assert_match "45 people joined in the last 30 days", text
-    assert_match "2 other angles held back", text,
-      "the restraint against over-suggesting has to survive the interface change"
+    assert_match "Held back for this audience", text,
+      "alternatives must be visible, or the agent goes looking for them elsewhere"
   end
 
-  test "only one angle per audience is offered at a time" do
+  test "exactly one angle is recommended, the rest are named but not expanded" do
     text = tool_text(call_tool("nitro_suggest_campaigns"))
+    angles = Suggestion.in_category("new_subscribers").order(:variant)
 
-    titles = Suggestion.in_category("new_subscribers").map(&:title)
-    shown = titles.count { |t| text.include?(t) }
-    assert_equal 1, shown, "showing every angle at once is the thing we are avoiding"
+    # Every angle is discoverable by title and id.
+    angles.each { |a| assert_match a.title, text }
+
+    # Only the recommendation is expanded, so there is still a single answer to
+    # "what should I send", not three competing ones.
+    expanded = angles.count { |a| text.include?(a.proposed_angle) }
+    assert_equal 1, expanded, "only the recommended angle should be argued in full"
+    assert_match "Suggestion ##{angles.first.id}", text
+  end
+
+  test "a held-back angle can be drafted directly, without dismissing down to it" do
+    held = Suggestion.open.in_category("new_subscribers").order(:variant).second
+
+    text = tool_text(call_tool("nitro_draft_campaign", { suggestion_id: held.id }))
+
+    assert_match "Created draft campaign", text
+    assert_equal "drafted", held.reload.status
+    assert_equal 0, Suggestion.open.in_category("new_subscribers").count
   end
 
   test "dismissing promotes the next angle" do

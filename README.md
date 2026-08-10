@@ -55,8 +55,12 @@ brew install flyctl
 fly auth login
 fly apps create nitrosend-feature-demo
 fly secrets set SECRET_KEY_BASE=$(bin/rails secret)
-fly deploy
+fly deploy --ha=false
+fly scale count 1
 ```
+
+Run on **one machine only**. The SQLite database ships inside the image, so two
+machines means two independent copies and writes land in whichever one answered.
 
 Seeded dates are relative to build time, so redeploy to refresh them.
 

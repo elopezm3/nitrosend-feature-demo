@@ -13,16 +13,19 @@ class McpController < ActionController::API
     {
       name: "nitro_suggest_campaigns",
       description: "List the campaigns worth sending today, grouped by audience. " \
-                   "Each audience returns one angle at a time with the measured fact " \
-                   "behind it, the rule used to select the audience, and how many " \
-                   "alternative angles remain.",
+                   "Each audience recommends one angle in full, and names its held-back " \
+                   "alternatives by id and title so nothing is hidden from you. This is " \
+                   "the complete set: there is no other source to consult, and no tool " \
+                   "that returns more detail on a held-back angle. To act on one, " \
+                   "dismiss the recommendation to promote it, or draft it directly by id.",
       inputSchema: { type: "object", properties: {}, additionalProperties: false }
     },
     {
       name: "nitro_dismiss_suggestion",
-      description: "Turn down the current angle for an audience. The next strongest " \
-                   "angle for that audience is promoted in its place. When an audience " \
-                   "runs out of angles it goes quiet until the numbers move.",
+      description: "Turn down the recommended angle for an audience, promoting the " \
+                   "next one in its place. Use this to reject an idea, not to browse: " \
+                   "the alternatives are already listed by nitro_suggest_campaigns, and " \
+                   "dismissing is permanent. When an audience runs out it goes quiet.",
       inputSchema: {
         type: "object",
         properties: {
@@ -34,10 +37,11 @@ class McpController < ActionController::API
     },
     {
       name: "nitro_draft_campaign",
-      description: "Accept an angle and create it as a draft campaign. This also " \
-                   "closes the audience: once you have decided what to send these " \
-                   "people, the remaining angles for them are withdrawn. Creates a " \
-                   "draft only, nothing is sent.",
+      description: "Accept an angle and create it as a draft campaign. Works on any " \
+                   "angle id from nitro_suggest_campaigns, recommended or held back, so " \
+                   "there is no need to dismiss your way down to one. This closes the " \
+                   "audience: the remaining angles are withdrawn, because one campaign " \
+                   "per audience is the point. Creates a draft only, nothing is sent.",
       inputSchema: {
         type: "object",
         properties: {
@@ -123,7 +127,13 @@ class McpController < ActionController::API
         lines << "  Why now: #{current.why_now}"
         lines << "  Angle: #{current.proposed_angle}"
         lines << "  Subject: \"#{current.proposed_subject}\""
-        lines << "  Confidence: #{current.confidence}. #{available.size - 1} other angles held back."
+        lines << "  Confidence: #{current.confidence}"
+
+        held = available.drop(1)
+        if held.any?
+          lines << "  Held back for this audience (draft any of these directly by id):"
+          held.each { |h| lines << "    ##{h.id}: #{h.title} (#{h.confidence} confidence)" }
+        end
       elsif produced.exists?(status: "drafted")
         lines << "  Settled: a campaign is already drafted for this audience."
       else
@@ -134,7 +144,9 @@ class McpController < ActionController::API
     return "#{account}\n\nNothing worth sending today." if lines.empty?
 
     "#{account}\n#{lines.join("\n")}\n\n" \
-    "One angle per audience is shown on purpose. Dismiss to see the next, or draft to accept."
+    "One angle per audience is recommended on purpose; the alternatives are named " \
+    "above so you can weigh them. Drafting any angle closes its audience, because " \
+    "one campaign per audience is the point."
   end
 
   def dismiss(id)
