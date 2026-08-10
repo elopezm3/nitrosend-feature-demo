@@ -37,7 +37,10 @@ module Api
         list_size: Contact.subscribed.count,
         campaigns_sent: Campaign.sent.count,
         generated_at: Suggestion.open.maximum(:generated_at),
-        last_send: last && { name: last.name, sent_at: last.sent_at, open_rate: last.open_rate }
+        last_send: last && { name: last.name, sent_at: last.sent_at, open_rate: last.open_rate },
+        open_count: Suggestion.open.count,
+        drafted_count: Suggestion.where(status: "drafted").count,
+        audience_count: Suggestion.distinct.count(:category)
       }
     end
 

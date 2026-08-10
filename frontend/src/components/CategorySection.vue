@@ -32,7 +32,11 @@ const verdict = computed(() => {
         <h2 class="text-base font-semibold tracking-[-0.01em] text-default">
           {{ category.label }}
         </h2>
-        <span class="text-sm text-muted">{{ format.format(category.size) }} contacts</span>
+        <span class="text-sm text-muted">{{ format.format(category.size) }} members</span>
+        <!-- The product already ships system segments (Bounced, Suppressed,
+             Recently unsubscribed) tagged exactly like this. These audiences
+             are the same kind of object, so they carry the same mark. -->
+        <span class="tag">System segment</span>
       </div>
       <!-- The rule sits next to the number on purpose. A suggestion is only
            worth trusting if you can see what it counted. -->

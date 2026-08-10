@@ -4,7 +4,7 @@
    with the focus ring. */
 
 .button {
-  @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-2
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2
          text-sm font-semibold transition-colors
          focus-visible:outline-2 focus-visible:outline-offset-2
          focus-visible:outline-brand-600
@@ -38,7 +38,7 @@
 
 .button.xs { @apply px-2 py-1 text-xs; }
 .button.sm { @apply px-2.5 py-1.5; }
-.button.lg { @apply px-4; }
+.button.lg { @apply px-5 py-2.5 text-[15px]; }
 
 /* Bare icon click target. */
 .icon-button {

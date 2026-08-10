@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue"
 import { RouterLink } from "vue-router"
 import api from "@/services/api"
+import AppNav from "@/components/AppNav.vue"
 
 const props = defineProps({ id: { type: String, required: true } })
 
@@ -21,10 +22,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[1200px] px-6 py-12">
+  <div class="mx-auto max-w-[1200px] px-6 pt-6 pb-20">
     <RouterLink
       to="/"
-      class="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-default"
+      class="mb-5 inline-flex items-center gap-1.5 text-sm text-muted hover:text-default"
     >
       <svg viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
         <path d="M13 4l-6 6 6 6z" />
@@ -45,12 +46,19 @@ onMounted(async () => {
     </div>
 
     <div v-else class="flex flex-col gap-5">
-      <header>
-        <div class="mb-1.5 flex items-center gap-2.5">
-          <p class="eyebrow">Campaign</p>
-          <span class="badge yellow">Draft</span>
+      <header class="flex items-start gap-3">
+        <div class="pt-1.5">
+          <AppNav />
         </div>
-        <h1 class="text-2xl font-semibold tracking-[-0.02em] text-default">{{ campaign.name }}</h1>
+        <div class="min-w-0">
+          <div class="mb-1.5 flex items-center gap-2.5">
+            <p class="eyebrow">Campaign</p>
+            <span class="badge yellow">Draft</span>
+          </div>
+          <h1 class="text-[34px] font-bold leading-[1.1] tracking-[-0.025em] text-default">
+            {{ campaign.name }}
+          </h1>
+        </div>
       </header>
 
       <div class="card">

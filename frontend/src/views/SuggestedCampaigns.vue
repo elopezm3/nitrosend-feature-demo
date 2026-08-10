@@ -6,6 +6,8 @@ import PageTitle from "@/components/PageTitle.vue"
 import CategorySection from "@/components/CategorySection.vue"
 import NoDataPlaceholder from "@/components/NoDataPlaceholder.vue"
 import SkeletonLoader from "@/components/SkeletonLoader.vue"
+import StatRow from "@/components/StatRow.vue"
+import AppNav from "@/components/AppNav.vue"
 import DismissedTray from "@/components/DismissedTray.vue"
 import SlideOver from "@/components/SlideOver.vue"
 import PromptBlock from "@/components/PromptBlock.vue"
@@ -17,6 +19,22 @@ const format = new Intl.NumberFormat("en-US")
 const selected = ref(null)
 
 onMounted(() => store.load())
+
+// The product opens every list surface with a row of stat tiles.
+const stats = computed(() => {
+  const a = store.account
+  if (!a) return []
+  return [
+    { label: "Suggestions", value: a.open_count,
+      detail: `across ${a.audience_count} audiences` },
+    { label: "Reachable", value: format.format(a.list_size),
+      detail: "subscribed contacts" },
+    { label: "Last send", value: a.last_send ? `${a.last_send.open_rate}%` : "-",
+      detail: a.last_send ? a.last_send.name : "nothing sent yet" },
+    { label: "Drafted", value: a.drafted_count,
+      detail: "campaigns from suggestions" }
+  ]
+})
 
 const subtitle = computed(() => {
   const account = store.account
@@ -40,15 +58,17 @@ async function draft(id) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[1200px] px-6 py-12">
+  <div class="mx-auto max-w-[1200px] px-6 pt-4 pb-20">
     <PageTitle eyebrow="Kestrel Supply Co." title="AI suggested campaigns">
+      <template #lead><AppNav /></template>
       <template #subtitle>{{ subtitle }}</template>
       <template #actions>
-        <!-- A utility rather than the point of the page, so it stays secondary.
-             Brand orange lives on current navigation instead. -->
+        <!-- Every list surface in the product leads with a solid brand CTA
+             below the title. This is the only page level action here, so it
+             takes that slot. -->
         <button
           type="button"
-          class="button secondary"
+          class="button cta lg"
           :disabled="store.rebuilding"
           @click="store.rebuild()"
         >
@@ -63,6 +83,8 @@ async function draft(id) {
     >
       {{ store.error }}
     </div>
+
+    <StatRow v-if="!store.loading && stats.length" :stats="stats" />
 
     <SkeletonLoader v-if="store.loading" :count="3" />
 
