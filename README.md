@@ -4,10 +4,6 @@ A demo interface for a feature I think Nitrosend should add: a surface that
 proposes campaigns worth sending today, grounded in what the account has
 already sent and how its contacts actually behaved.
 
-**[NOTES.md](NOTES.md) is the write-up**: what I noticed, why it matters, the
-decisions behind it, and what I would do next. This file covers what it is and
-how to run it.
-
 ## The idea
 
 Nitrosend's pitch is that email "stops being a tool you operate and becomes
